@@ -12,7 +12,11 @@ const app = express();
 app.use(express.json());
 
 const env = await load();
-await mongoose.connect(env["MONGO"]);
+let mongoUri: string | undefined = env["MONGO"];
+if (mongoUri === undefined) {
+  mongoUri = Deno.env.get("MONGO");
+}
+await mongoose.connect(mongoUri as string);
 
 app.get("/api/mascotas", getMascotas);
 app.get("/api/mascotas/:id", getMascota);
